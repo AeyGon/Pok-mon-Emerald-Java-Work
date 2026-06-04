@@ -5,27 +5,32 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import javax.swing.JPanel;
+import tile.TileManager;
+
 
 public class GamePanel extends JPanel implements Runnable {
 
-    final int originalTileSize = 16;
-    final int scale = 3;
+   public final int originalTileSize = 16;
+   public final int scale = 3;
 
     public final int tileSize = originalTileSize * scale;
 
-    final int maxScreenCol = 16;
-    final int maxScreenRow = 12;
-    final int screenWidth = tileSize * maxScreenCol;
-    final int screenHeight = tileSize * maxScreenRow;
+   public final int maxScreenCol = 16;
+   public final int maxScreenRow = 12;
+   public final int screenWidth = tileSize * maxScreenCol;
+   public final int screenHeight = tileSize * maxScreenRow;
 
     int FPS = 60;
 
     Thread gameThread;
 
-    public GamePanel() {
-        this.setPreferredSize(new Dimension(screenWidth, screenHeight));
-        this.setBackground(Color.black);
+    public GamePanel(){
+        this.setPreferredSize(new Dimension(screenWidth,screenHeight));
+        this.setBackground(Color.BLACK);
         this.setDoubleBuffered(true);
+
+        this.addKeyListener(keyH);
+        this.setFocusable(true);
     }
 
     public void startGameThread() {
@@ -54,18 +59,42 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
-
+                if(keyH.upPressed){
+                    playerY -= playerSpeed;
+                } else if (keyH.downPressed) {
+                    playerY += playerSpeed;
+                } else if (keyH.leftPressed) {
+                    playerX -= playerSpeed;
+                }
+                else if (keyH.rightPressed) {
+                    playerX += playerSpeed;
+                }
     }
+
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-
         Graphics2D g2 = (Graphics2D) g;
-        g2.setColor(Color.WHITE);
-        g2.fillRect(100, 100, tileSize, tileSize);
+        tileM.draw(g2);
 
+        g2.setColor(Color.WHITE);
+        g2.fillRect(playerX, playerY, tileSize, tileSize);
         g2.dispose();
+
+
+
+
+
     }
+
+    KeyHandler keyH = new KeyHandler();
+    public TileManager tileM = new TileManager(this);
+
+    int playerX = 100;
+    int playerY = 100;
+    int playerSpeed = 4;
+
+
 }
 
 
